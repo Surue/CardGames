@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     
     private Stack<CardController> _cards;
     private CardController _trumpCard;
+    public CardController TrumpCard => _trumpCard;
+    private bool _hasSwitchedTrumpCard = false;
+    public bool CanSwitchTrumpCard => !_hasSwitchedTrumpCard;
 
     private int _nbCardPlayThisTurn = 0;
     private int _turnPlayed = 0;
@@ -36,6 +39,16 @@ public class GameManager : MonoBehaviour
 
     private PlayerType _turnFirstPlayer = PlayerType.Human;
 
+    private static GameManager s_gameManager;
+    public static GameManager Instance => s_gameManager;
+    private void Awake()
+    {
+        if (s_gameManager == null)
+        {
+            s_gameManager = this;
+        }
+    }
+
     private void Start()
     {
         _cards = new Stack<CardController>(_deck.OrderedCards.Count);
@@ -57,6 +70,7 @@ public class GameManager : MonoBehaviour
         // Select trump card
         _trumpCard = _cards.Peek();
         _trumpCard.SetOrientation(CardOrientation.Face);
+        _trumpCard.SetAsTrumpCard(_deckSpawnPosition.position);
         
         _gameState = GameState.HumanTurn;
         _humanHand.StartTurn();
@@ -253,5 +267,14 @@ public class GameManager : MonoBehaviour
     private int GetTurnScore(CardController firstCard, CardController secondCard)
     {
         return firstCard.GetScore(_trumpCard) + secondCard.GetScore(_trumpCard);
+    }
+
+    public void SwitchTrumpCard(PlayerHand playerHand, CardController other)
+    {
+        playerHand.AddCard(_trumpCard);
+        playerHand.RemoveCard(other);
+        other.transform.parent = _deckSpawnPosition;
+        other.SetAsTrumpCard(_deckSpawnPosition.position);
+        _hasSwitchedTrumpCard = true;
     }
 }

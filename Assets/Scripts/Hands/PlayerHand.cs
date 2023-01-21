@@ -13,6 +13,7 @@ public class PlayerHand : MonoBehaviour
     protected List<CardController> _availableCards;
     protected List<CardController> _playedCards;
     protected bool _hasPlayed = false;
+    private bool _hasFinishedFirstTurn;
     public bool HasPlayed => _hasPlayed;
 
     protected bool _isPlaying = false;
@@ -48,6 +49,12 @@ public class PlayerHand : MonoBehaviour
         
         ResetCardsPosition();
     }
+    
+    public void RemoveCard(CardController cardToRemove)
+    {
+        _availableCards.Remove(cardToRemove);
+        ResetCardsPosition();
+    }
 
     public void StartTurn()
     {
@@ -57,6 +64,7 @@ public class PlayerHand : MonoBehaviour
     public void EndTurn()
     {
         _hasPlayed = false;
+        _hasFinishedFirstTurn = true;
     }
 
     public void Win(CardController otherCard, int score)
@@ -96,5 +104,36 @@ public class PlayerHand : MonoBehaviour
                 cardController.UpdatePosition(newPosition);
             }
         }
+    }
+
+    protected bool CanSwitchTrumpCard()
+    {
+        if (!GameManager.Instance.CanSwitchTrumpCard) return false;
+        if (_hasFinishedFirstTurn) return false;
+        
+        var trumpCard = GameManager.Instance.TrumpCard;
+        foreach (var cardController in _availableCards)
+        {
+            if (cardController.CardSuits == trumpCard.CardSuits && cardController.CardNumber == CardNumber.Six)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected CardController GetCardToSwitchWithTrumpCard()
+    {
+        var trumpCard = GameManager.Instance.TrumpCard;
+        foreach (var cardController in _availableCards)
+        {
+            if (cardController.CardSuits == trumpCard.CardSuits && cardController.CardNumber == CardNumber.Six)
+            {
+                return cardController;
+            }
+        }
+
+        return null;
     }
 }

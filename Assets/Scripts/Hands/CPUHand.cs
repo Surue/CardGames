@@ -7,6 +7,14 @@ public class CPUHand : PlayerHand
 {
     private void Update()
     {
+        // Check can switch trump card
+        if (CanSwitchTrumpCard())
+        {
+            
+            GameManager.Instance.SwitchTrumpCard(this, GetCardToSwitchWithTrumpCard());
+        }
+        
+        // Play card
         if (!_isPlaying) return;
 
         var card = _availableCards[Random.Range(0, _availableCards.Count)];

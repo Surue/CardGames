@@ -1,16 +1,31 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class HumanHand : PlayerHand
 {
     private void Update()
     {
+        var mouseVector = Camera.main.ScreenPointToRay(Input.mousePosition);
+        
+        if (CanSwitchTrumpCard() && Input.GetMouseButtonDown(0) && Physics.Raycast(mouseVector, out var hitTrumpCard))
+        {
+            if (hitTrumpCard.transform.TryGetComponent(out CardController otherCard))
+            {
+                if (otherCard == GameManager.Instance.TrumpCard)
+                {
+                    GameManager.Instance.SwitchTrumpCard(this, GetCardToSwitchWithTrumpCard());
+                    return;
+                }
+            }
+        }
+        
+        // Play card
         if (!_isPlaying) return;
 
         if (!Input.GetMouseButtonDown(0)) return;
         
-        var mouseVector = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (!Physics.Raycast(mouseVector, out var hit)) return;
         
         if (!hit.transform.TryGetComponent(out CardController card)) return;
