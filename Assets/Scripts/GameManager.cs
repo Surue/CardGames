@@ -155,12 +155,14 @@ public class GameManager : MonoBehaviour
                         _humanHand.Win(cpuCard, turnScore);
                         _humanHand.StartTurn();
                         _gameState = GameState.HumanTurn;
+                        _turnFirstPlayer = PlayerType.Human;
                     }
                     else
                     {
                         _CPUHand.Win(humanCard, turnScore);
                         _CPUHand.StartTurn();
                         _gameState = GameState.CPUTurn;
+                        _turnFirstPlayer = PlayerType.CPU;
                     }
                 }
                 else
