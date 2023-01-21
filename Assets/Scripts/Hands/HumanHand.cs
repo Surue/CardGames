@@ -30,7 +30,8 @@ public class HumanHand : PlayerHand
         
         if (!hit.transform.TryGetComponent(out CardController card)) return;
             
-        if (!_availableCards.Contains(card)) return;
+        var possibleCards = _playFirst ? _availableCards : GetListOfPossibleCardToPlay(_firstCardPlayed);
+        if (!possibleCards.Contains(card)) return;
         card.Play(_playPosition.position);
         
         _lastCardPlayed = card;

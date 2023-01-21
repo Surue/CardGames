@@ -24,7 +24,10 @@ public class PlayerHand : MonoBehaviour
 
     private int _score = 0;
     public int Score => _score;
-    
+
+    protected CardController _firstCardPlayed;
+    protected bool _playFirst;
+
     private void Start()
     {
         _availableCards = new List<CardController>();
@@ -59,6 +62,14 @@ public class PlayerHand : MonoBehaviour
     public void StartTurn()
     {
         _isPlaying = true;
+        _playFirst = true;
+    }
+    
+    public void StartTurn(CardController firstCardPlayed)
+    {
+        _isPlaying = true;
+        _firstCardPlayed = firstCardPlayed;
+        _playFirst = false;
     }
 
     public void EndTurn()
@@ -135,5 +146,34 @@ public class PlayerHand : MonoBehaviour
         }
 
         return null;
+    }
+
+    protected List<CardController> GetListOfPossibleCardToPlay(CardController firstCardPlayed)
+    {
+        var result = new List<CardController>();
+        bool hasCardOfSameSuits = false;
+        
+        foreach (var availableCard in _availableCards)       
+        {
+            if (availableCard.CardSuits == GameManager.Instance.TrumpCard.CardSuits)
+            {
+                result.Add(availableCard);
+            }
+
+            if (availableCard.CardSuits == firstCardPlayed.CardSuits)
+            {
+                hasCardOfSameSuits = true;
+                result.Add(availableCard);
+            }
+        }
+
+        if (hasCardOfSameSuits)
+        {
+            return result;
+        }
+        else
+        {
+            return _availableCards;
+        }
     }
 }

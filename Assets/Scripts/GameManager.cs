@@ -94,7 +94,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        _CPUHand.StartTurn();
+                        _CPUHand.StartTurn(_humanHand.PlayedCard);
                         _gameState = GameState.CPUTurn;
                     }
                 }
@@ -111,7 +111,7 @@ public class GameManager : MonoBehaviour
                     }
                     else
                     {
-                        _humanHand.StartTurn();
+                        _humanHand.StartTurn(_CPUHand.PlayedCard);
                         _gameState = GameState.HumanTurn;
                     }
                 }

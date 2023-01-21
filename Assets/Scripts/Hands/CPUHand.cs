@@ -10,14 +10,14 @@ public class CPUHand : PlayerHand
         // Check can switch trump card
         if (CanSwitchTrumpCard())
         {
-            
             GameManager.Instance.SwitchTrumpCard(this, GetCardToSwitchWithTrumpCard());
         }
         
         // Play card
         if (!_isPlaying) return;
 
-        var card = _availableCards[Random.Range(0, _availableCards.Count)];
+        var possibleCards = _playFirst ? _availableCards : GetListOfPossibleCardToPlay(_firstCardPlayed);
+        var card = possibleCards[Random.Range(0, possibleCards.Count)];
         
         card.Play(_playPosition.position);
         
