@@ -48,9 +48,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spriteRenderer: {fileID: 4797525539574355060}
+  _boxCollider: {fileID: 6859470381033331895}
   _spriteBack: {fileID: 21300000, guid: f17ca85df37ab5a46a7ec0acaaf4418f, type: 3}
   _movementSpeed: 10
-  _isMoving: 0
 --- !u!54 &7808415630810145465
 Rigidbody:
   m_ObjectHideFlags: 0

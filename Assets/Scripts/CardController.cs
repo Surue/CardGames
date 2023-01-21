@@ -19,6 +19,7 @@ public enum CardState
 public class CardController : MonoBehaviour
 {
     [SerializeField] private SpriteRenderer _spriteRenderer;
+    [SerializeField] private BoxCollider _boxCollider;
     [SerializeField] private Sprite _spriteBack;
     [SerializeField] private float _movementSpeed;
     
@@ -40,6 +41,7 @@ public class CardController : MonoBehaviour
     {
         _cardData = data;
         _isMoving = false;
+        _boxCollider.enabled = false;
 
         SetOrientation(CardOrientation.Back);
     }
@@ -76,9 +78,17 @@ public class CardController : MonoBehaviour
         _movementCoroutine = StartCoroutine(MoveTo());
     }
 
+    public void SetAsTrumpCard(Vector3 deckPosition)
+    {
+        _boxCollider.enabled = true;
+        
+        UpdatePosition(deckPosition);
+    }
+
     public void AddToHand()
     {
         _cardState = CardState.InHand;
+        _boxCollider.enabled = true;
     }
 
     public void Play(Vector3 targetPosition)
@@ -87,6 +97,7 @@ public class CardController : MonoBehaviour
         
         _movementTarget = targetPosition;
         _movementCoroutine = StartCoroutine(MoveTo());
+        _boxCollider.enabled = false;
     }
 
     public void EndPlay(Vector3 targetPosition)
