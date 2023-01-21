@@ -152,10 +152,12 @@ public class PlayerHand : MonoBehaviour
     {
         var result = new List<CardController>();
         bool hasCardOfSameSuits = false;
+
+        var trumpCardSuits = GameManager.Instance.TrumpCard.CardSuits;
         
         foreach (var availableCard in _availableCards)       
         {
-            if (availableCard.CardSuits == GameManager.Instance.TrumpCard.CardSuits)
+            if (availableCard.CardSuits == trumpCardSuits)
             {
                 result.Add(availableCard);
             }
@@ -165,6 +167,12 @@ public class PlayerHand : MonoBehaviour
                 hasCardOfSameSuits = true;
                 result.Add(availableCard);
             }
+        }
+
+        // Doesn't force the player to play the "buur"
+        if (result.Count == 1 && result[0].CardSuits == trumpCardSuits && result[0].CardNumber == CardNumber.Jack)
+        {
+            hasCardOfSameSuits = false;
         }
 
         if (hasCardOfSameSuits)
