@@ -9,6 +9,7 @@ public class HumanHand : PlayerHand
     {
         var mouseVector = Camera.main.ScreenPointToRay(Input.mousePosition);
         
+        // Switch with trump card
         if (CanSwitchTrumpCard() && Input.GetMouseButtonDown(0) && Physics.Raycast(mouseVector, out var hitTrumpCard))
         {
             if (hitTrumpCard.transform.TryGetComponent(out CardController otherCard))
@@ -19,6 +20,41 @@ public class HumanHand : PlayerHand
                     return;
                 }
             }
+        }
+        
+        // Switch 3 cards with blind
+        if (CanSwitchBlind() && Input.GetMouseButtonDown(0) && Physics.Raycast(mouseVector, out var hitBlindCard))
+        {
+            if (hitBlindCard.transform.TryGetComponent(out CardController blindCard))
+            {
+                if (_blindCards.Contains(blindCard))
+                {
+                    _isSwitchingWithBlind = true;
+                }
+            }
+        }
+
+        if (_isSwitchingWithBlind)
+        {
+            if (Input.GetMouseButtonDown(0) && Physics.Raycast(mouseVector, out var hitCardToSwitchWithBlind))
+            {
+                if (hitCardToSwitchWithBlind.transform.TryGetComponent(out CardController cardToSwitch))
+                {
+                    if (_availableCards.Contains(cardToSwitch))
+                    {
+                        if (cardToSwitch.CardState == CardState.InHand)
+                        {
+                            cardToSwitch.SetReadyToSwitchWithBlind(_offsetReadySwitchBlind);
+                            _cardToSwitchWithBlind.Add(cardToSwitch);
+                        }else if (cardToSwitch.CardState == CardState.ReadyToSwitchWithBlind)
+                        {
+                            cardToSwitch.UnsetReadyToSwitchWithBlind(_offsetReadySwitchBlind);
+                            _cardToSwitchWithBlind.Remove(cardToSwitch);
+                        }
+                    }
+                }
+            }
+            return;
         }
         
         // Play card

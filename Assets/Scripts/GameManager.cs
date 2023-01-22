@@ -61,15 +61,22 @@ public class GameManager : MonoBehaviour
             _cards.Push(cardController);
         }
 
+        // Cards to hand
         for (int i = 0; i < 9; i++)
         {
-            _humanHand.AddCard(_cards.Pop());
-            _CPUHand.AddCard(_cards.Pop());
+            _humanHand.AddCardToHand(_cards.Pop());
+            _CPUHand.AddCardToHand(_cards.Pop());
+        }
+        
+        // Cards to blind
+        for (int i = 0; i < 3; i++)
+        {
+            _humanHand.AddCardToBlind(_cards.Pop());
+            _CPUHand.AddCardToBlind(_cards.Pop());
         }
 
         // Select trump card
         _trumpCard = _cards.Peek();
-        _trumpCard.SetOrientation(CardOrientation.Face);
         _trumpCard.SetAsTrumpCard(_deckSpawnPosition.position);
         
         _gameState = GameState.HumanTurn;
@@ -273,7 +280,7 @@ public class GameManager : MonoBehaviour
 
     public void SwitchTrumpCard(PlayerHand playerHand, CardController other)
     {
-        playerHand.AddCard(_trumpCard);
+        playerHand.AddCardToHand(_trumpCard);
         playerHand.RemoveCard(other);
         other.transform.parent = _deckSpawnPosition;
         other.SetAsTrumpCard(_deckSpawnPosition.position);

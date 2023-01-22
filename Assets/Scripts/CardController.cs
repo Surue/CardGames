@@ -11,6 +11,8 @@ public enum CardOrientation
 public enum CardState
 {
     InDeck,
+    InBlind,
+    ReadyToSwitchWithBlind,
     InHand,
     BeingPlayed,
     Played,
@@ -46,7 +48,7 @@ public class CardController : MonoBehaviour
         SetOrientation(CardOrientation.Back);
     }
 
-    public void SetOrientation(CardOrientation newCardOrientation)
+    private void SetOrientation(CardOrientation newCardOrientation)
     {
         _cardOrientation = newCardOrientation;
 
@@ -83,12 +85,40 @@ public class CardController : MonoBehaviour
         _boxCollider.enabled = true;
         
         UpdatePosition(deckPosition);
+        SetOrientation(CardOrientation.Face);
     }
 
-    public void AddToHand()
+    public void AddToHand(CardOrientation cardOrientation)
     {
         _cardState = CardState.InHand;
         _boxCollider.enabled = true;
+        SetOrientation(cardOrientation);
+    }
+    
+    public void AddToBlind(Vector3 targetPosition)
+    {
+        _cardState = CardState.InBlind;
+        _boxCollider.enabled = true;
+        SetOrientation(CardOrientation.Back);
+        
+        _movementTarget = targetPosition;
+        _movementCoroutine = StartCoroutine(MoveTo());
+    }
+
+    public void SetReadyToSwitchWithBlind(Vector3 offsetReadyToSwitch)
+    {
+        _cardState = CardState.ReadyToSwitchWithBlind;
+        
+        _movementTarget += offsetReadyToSwitch;
+        _movementCoroutine = StartCoroutine(MoveTo());
+    }
+    
+    public void UnsetReadyToSwitchWithBlind(Vector3 offsetReadyToSwitch)
+    {
+        _cardState = CardState.InHand;
+        
+        _movementTarget -= offsetReadyToSwitch;
+        _movementCoroutine = StartCoroutine(MoveTo());
     }
 
     public void Play(Vector3 targetPosition)

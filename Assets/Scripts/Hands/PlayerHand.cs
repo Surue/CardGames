@@ -9,9 +9,13 @@ public class PlayerHand : MonoBehaviour
     [SerializeField] protected CardOrientation _defaultCardOrientation = CardOrientation.Face;
     [SerializeField] protected Transform _playPosition;
     [SerializeField] protected Transform _winHandPosition;
+    [SerializeField] protected Transform _blindPosition;
+    [SerializeField] protected Vector3 _offsetReadySwitchBlind;
     
     protected List<CardController> _availableCards;
     protected List<CardController> _playedCards;
+    protected List<CardController> _blindCards;
+    
     protected bool _hasPlayed = false;
     private bool _hasFinishedFirstTurn;
     public bool HasPlayed => _hasPlayed;
@@ -22,16 +26,22 @@ public class PlayerHand : MonoBehaviour
     public CardController PlayedCard => _lastCardPlayed;
     protected bool _hasPlayedACard;
 
+    protected bool _hasSwitchBlind;
+    protected bool _isSwitchingWithBlind;
+    protected List<CardController> _cardToSwitchWithBlind;
+
     private int _score = 0;
     public int Score => _score;
 
     protected CardController _firstCardPlayed;
     protected bool _playFirst;
 
-    private void Start()
+    private void Awake()
     {
         _availableCards = new List<CardController>();
         _playedCards = new List<CardController>();
+        _blindCards = new List<CardController>();
+        _cardToSwitchWithBlind = new List<CardController>();
     }
 
     private void LateUpdate()
@@ -41,16 +51,48 @@ public class PlayerHand : MonoBehaviour
             _hasPlayedACard = false;
             _hasPlayed = true;
         }
+
+        if (_isSwitchingWithBlind)
+        {
+            if (_cardToSwitchWithBlind.Count == 3)
+            {
+                _isSwitchingWithBlind = false;
+                _hasSwitchBlind = true;
+
+                foreach (var cardController in _blindCards)
+                {
+                    cardController.AddToHand(_defaultCardOrientation);
+                    _availableCards.Add(cardController);
+                }
+                
+                _blindCards.Clear();
+
+                foreach (var cardController in _cardToSwitchWithBlind)
+                {
+                    cardController.AddToBlind(_blindPosition.position);
+                    _availableCards.Remove(cardController);
+                    _blindCards.Add(cardController);
+                }
+                
+                ResetCardsPosition();
+            }
+        }
     }
 
-    public void AddCard(CardController newCard)
+    public void AddCardToHand(CardController newCard)
     {
         _availableCards.Add(newCard);
         newCard.transform.parent = transform;
-        newCard.SetOrientation(_defaultCardOrientation);
-        newCard.AddToHand();
+        newCard.AddToHand(_defaultCardOrientation);
         
         ResetCardsPosition();
+    }
+
+    public void AddCardToBlind(CardController newCard)
+    {
+        _blindCards.Add(newCard);
+        newCard.transform.parent = transform;
+        newCard.AddToBlind(_blindPosition.position);
     }
     
     public void RemoveCard(CardController cardToRemove)
@@ -183,5 +225,10 @@ public class PlayerHand : MonoBehaviour
         {
             return _availableCards;
         }
+    }
+
+    protected bool CanSwitchBlind()
+    {
+        return !_firstCardPlayed && !_hasSwitchBlind;
     }
 }

@@ -269,6 +269,7 @@ Transform:
   m_Children:
   - {fileID: 2066430866}
   - {fileID: 406478084}
+  - {fileID: 832093263}
   m_Father: {fileID: 1769570667}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -288,6 +289,70 @@ MonoBehaviour:
   _defaultCardOrientation: 0
   _playPosition: {fileID: 2066430866}
   _winHandPosition: {fileID: 406478084}
+  _blindPosition: {fileID: 832093263}
+  _offsetReadySwitchBlind: {x: 0, y: -1, z: 0}
+--- !u!1 &684695687
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 684695688}
+  m_Layer: 0
+  m_Name: BlindPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &684695688
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 684695687}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8, y: -0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1953235573}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &832093262
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 832093263}
+  m_Layer: 0
+  m_Name: BlindPosition
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &832093263
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 832093262}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 8, y: 0.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 545434438}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1179414163
 GameObject:
   m_ObjectHideFlags: 0
@@ -464,6 +529,7 @@ Transform:
   m_Children:
   - {fileID: 1179414164}
   - {fileID: 1791730060}
+  - {fileID: 684695688}
   m_Father: {fileID: 1769570667}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -483,6 +549,8 @@ MonoBehaviour:
   _defaultCardOrientation: 0
   _playPosition: {fileID: 1179414164}
   _winHandPosition: {fileID: 1791730060}
+  _blindPosition: {fileID: 684695688}
+  _offsetReadySwitchBlind: {x: 0, y: 1, z: 0}
 --- !u!1 &2066430865
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SocialPlatforms;
 
@@ -11,6 +12,27 @@ public class CPUHand : PlayerHand
         if (CanSwitchTrumpCard())
         {
             GameManager.Instance.SwitchTrumpCard(this, GetCardToSwitchWithTrumpCard());
+        }
+        
+        // S$witching blind
+        if (CanSwitchBlind())
+        {
+            var trumpCard = GameManager.Instance.TrumpCard;
+            var sortedCards = _availableCards.Where(x => x.CardSuits != trumpCard.CardSuits).OrderBy(x => x.CardNumber).ToList();
+
+            if (sortedCards.Count >= 3)
+            {
+                _isSwitchingWithBlind = true;
+                foreach (var cardController in sortedCards)
+                {
+                    if (_cardToSwitchWithBlind.Count == 3) continue;
+
+                    cardController.SetReadyToSwitchWithBlind(_offsetReadySwitchBlind);
+                    _cardToSwitchWithBlind.Add(cardController);
+
+                }
+            }
+
         }
         
         // Play card
