@@ -1,6 +1,13 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
+public enum PlayerType
+{
+    Human,
+    CPU
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -11,6 +18,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private PlayerHand _CPUHand;
     
     private Stack<CardController> _cards;
+    private CardController _originalTrumpCard;
+    public CardController OriginalTrumpCard => _originalTrumpCard;
     private CardController _trumpCard;
     public CardController TrumpCard => _trumpCard;
     private bool _hasSwitchedTrumpCard = false;
@@ -30,12 +39,6 @@ public class GameManager : MonoBehaviour
     }
 
     private GameState _gameState = GameState.Setup;
-
-    private enum PlayerType
-    {
-        Human,
-        CPU
-    }
 
     private PlayerType _turnFirstPlayer = PlayerType.Human;
 
@@ -76,8 +79,9 @@ public class GameManager : MonoBehaviour
         }
 
         // Select trump card
-        _trumpCard = _cards.Peek();
+        _trumpCard = _cards.Pop();
         _trumpCard.SetAsTrumpCard(_deckSpawnPosition.position);
+        _originalTrumpCard = _trumpCard;
         
         _gameState = GameState.HumanTurn;
         _humanHand.StartTurn();
@@ -183,32 +187,34 @@ public class GameManager : MonoBehaviour
                         _CPUHand.Win(humanCard, turnScore);
                     }
 
+                    if (_humanHand.Score > _CPUHand.Score)
+                    {
+                        Debug.Log("The human win with " + _humanHand.Score);
+                        Debug.Log("The CPU lose with " + _CPUHand.Score);
+                    }
+                    else if(_humanHand.Score < _CPUHand.Score)
+                    {
+                        Debug.Log("The CPU win with " + _CPUHand.Score);
+                        Debug.Log("The human lose with " + _humanHand.Score);
+                    }
+                    else
+                    {
+                        Debug.Log("It's a draw, each player has " + _humanHand.Score);
+                    }
+                    
                     _gameState = GameState.EndGame;
                 }
                 
                 break;
             case GameState.EndGame:
-                if (_humanHand.Score > _CPUHand.Score)
-                {
-                    Debug.Log("The human win with " + _humanHand.Score);
-                    Debug.Log("The CPU lose with " + _CPUHand.Score);
-                }
-                else if(_humanHand.Score < _CPUHand.Score)
-                {
-                    Debug.Log("The CPU win with " + _CPUHand.Score);
-                    Debug.Log("The human lose with " + _humanHand.Score);
-                }
-                else
-                {
-                    Debug.Log("It's a draw, each player has " + _humanHand.Score);
-                }
+                
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
         }
     }
 
-    private PlayerType GetTurnWinner(PlayerType firstPlayer, PlayerType secondPlayer, CardController firstCard, CardController secondCard)
+    public PlayerType GetTurnWinner(PlayerType firstPlayer, PlayerType secondPlayer, CardController firstCard, CardController secondCard)
     {
         // Trump
         if (firstCard.CardSuits == _trumpCard.CardSuits)
@@ -273,7 +279,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private int GetTurnScore(CardController firstCard, CardController secondCard)
+    public int GetTurnScore(CardController firstCard, CardController secondCard)
     {
         return firstCard.GetScore(_trumpCard) + secondCard.GetScore(_trumpCard);
     }
@@ -284,6 +290,92 @@ public class GameManager : MonoBehaviour
         playerHand.RemoveCard(other);
         other.transform.parent = _deckSpawnPosition;
         other.SetAsTrumpCard(_deckSpawnPosition.position);
+        _trumpCard = other;
         _hasSwitchedTrumpCard = true;
+    }
+
+    public List<CardController> GetCardsPlayed(PlayerType playerType)
+    {
+        switch (playerType)
+        {
+            case PlayerType.Human:
+                return _humanHand.CardsPlayed();
+            case PlayerType.CPU:
+                return _CPUHand.CardsPlayed();
+            default:
+                throw new ArgumentOutOfRangeException(nameof(playerType), playerType, null);
+        }
+    }
+    
+    public CardController GetCardPlayed(PlayerType playerType)
+    {
+        switch (playerType)
+        {
+            case PlayerType.Human:
+                return _humanHand.PlayedCard;
+            case PlayerType.CPU:
+                return _CPUHand.PlayedCard;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(playerType), playerType, null);
+        }
+    }
+    
+    public List<CardController> GetCardsInHand(PlayerType playerType)
+    {
+        switch (playerType)
+        {
+            case PlayerType.Human:
+                return _humanHand.CardsInHand();
+            case PlayerType.CPU:
+                return _CPUHand.CardsInHand();
+            default:
+                throw new ArgumentOutOfRangeException(nameof(playerType), playerType, null);
+        }
+    }
+    
+    public List<CardController> GetCardsInBlind(PlayerType playerType)
+    {
+        switch (playerType)
+        {
+            case PlayerType.Human:
+                return _humanHand.CardsInBlind();
+            case PlayerType.CPU:
+                return _CPUHand.CardsInBlind();
+            default:
+                throw new ArgumentOutOfRangeException(nameof(playerType), playerType, null);
+        }
+    }
+
+    public bool HasSwitchWithTrumpCard(PlayerType playerType)
+    {
+        if (!_hasSwitchedTrumpCard) return false;
+        
+        switch (playerType)
+        {
+            case PlayerType.Human:
+                return _humanHand.HasSwitchTrumpCard;
+            case PlayerType.CPU:
+                return _CPUHand.HasSwitchTrumpCard;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(playerType), playerType, null);
+        }
+    }
+
+    public List<CardController> GetCardsInDeck()
+    {
+        return _cards.ToList();
+    }
+
+    public int GetScore(PlayerType playerType)
+    {
+        switch (playerType)
+        {
+            case PlayerType.Human:
+                return _humanHand.Score;
+            case PlayerType.CPU:
+                return _CPUHand.Score;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(playerType), playerType, null);
+        }
     }
 }

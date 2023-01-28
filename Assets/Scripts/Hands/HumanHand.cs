@@ -17,6 +17,7 @@ public class HumanHand : PlayerHand
                 if (otherCard == GameManager.Instance.TrumpCard)
                 {
                     GameManager.Instance.SwitchTrumpCard(this, GetCardToSwitchWithTrumpCard());
+                    _hasSwitchTrumpCard = true;
                     return;
                 }
             }

@@ -36,6 +36,9 @@ public class PlayerHand : MonoBehaviour
     protected CardController _firstCardPlayed;
     protected bool _playFirst;
 
+    protected bool _hasSwitchTrumpCard;
+    public bool HasSwitchTrumpCard => _hasSwitchTrumpCard;
+
     private void Awake()
     {
         _availableCards = new List<CardController>();
@@ -226,9 +229,61 @@ public class PlayerHand : MonoBehaviour
             return _availableCards;
         }
     }
+    
+    protected List<CardController> GetListOfPossibleCardToPlay(List<CardController> availableCards, CardController firstCardPlayed)
+    {
+        var result = new List<CardController>();
+        bool hasCardOfSameSuits = false;
+
+        var trumpCardSuits = GameManager.Instance.TrumpCard.CardSuits;
+        
+        foreach (var availableCard in availableCards)       
+        {
+            if (availableCard.CardSuits == trumpCardSuits)
+            {
+                result.Add(availableCard);
+            }
+
+            if (availableCard.CardSuits == firstCardPlayed.CardSuits)
+            {
+                hasCardOfSameSuits = true;
+                result.Add(availableCard);
+            }
+        }
+
+        // Doesn't force the player to play the "buur"
+        if (result.Count == 1 && result[0].CardSuits == trumpCardSuits && result[0].CardNumber == CardNumber.Jack)
+        {
+            hasCardOfSameSuits = false;
+        }
+
+        if (hasCardOfSameSuits)
+        {
+            return result;
+        }
+        else
+        {
+            return availableCards;
+        }
+    }
 
     protected bool CanSwitchBlind()
     {
         return !_firstCardPlayed && !_hasSwitchBlind;
+    }
+
+    public List<CardController> CardsPlayed()
+    {
+        return _playedCards;
+    }
+    
+    public List<CardController> CardsInHand()
+    {
+        return _availableCards;
+    }
+    
+    public List<CardController> CardsInBlind()
+    {
+        return _blindCards;
     }
 }
